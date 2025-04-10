@@ -60,41 +60,41 @@ def generer_salle():
 
 def gerer_evenement(evenement, joueur):
     if evenement["type"] == "monstre":
-        print(f"Vous rencontrez un {evenement['nom']}")
+        print(f"\nVous rencontrez un {evenement['nom']}")
         reponse_monstre = input("Voulez vous le combattre (A) ou fuir (B) ? ")
         if reponse_monstre.strip().upper() == "A":
             combat(joueur, evenement)
 
         if reponse_monstre.strip().upper() == "B":
             degats_fuite = random.randint(2, 8)
-            print(f"⚠️ Vous fuyez... mais le monstre vous jette un sort avant de partir qui vous inflige {degats_fuite} pv !")
+            print(f"\n⚠️ Vous fuyez... mais le monstre vous jette un sort avant de partir qui vous inflige {degats_fuite} pv !")
             joueur["pv"] -= degats_fuite
-            print(f"Il vous reste {joueur['pv']} pv")
+            print(f"\nIl vous reste {joueur['pv']} pv")
 
     elif evenement['type'] == "potion":
-        print(f"Vous touvez une {evenement['nom']}.")
-        print(f"Vous avez {joueur['pv']} pv.")
+        print(f"\nVous touvez une {evenement['nom']}.")
+        print(f"\nVous avez {joueur['pv']} pv.")
         reponse_potion = input(f"voulez vous utiliser cette potion qui vous soignera de {evenement['soin']} pv ? Oui (A) ou Non (B)")
         if reponse_potion.strip().upper() == "A":
-            print(f"Vous vous soignez de {evenement['soin']} pv")
+            print(f"\nVous vous soignez de {evenement['soin']} pv")
             joueur["pv"] += evenement["soin"]
-            print(f"Vous avez maintenant {joueur['pv']} pv.")
+            print(f"\nVous avez maintenant {joueur['pv']} pv.")
 
         else:
             print("Cette potion a été rangée dans votre inventaire")
             joueur['inventaire'].append(evenement['nom'])
 
     elif evenement['type'] == "piege":
-        print(f"Mince, vous tombez sur un piège qui vous inflige {evenement['degats']} pv")
+        print(f"\nMince, vous tombez sur un piège qui vous inflige {evenement['degats']} pv")
         joueur["pv"] -= evenement["degats"]
-        print(f"Il vous reste {joueur['pv']} pv")
+        print(f"\nIl vous reste {joueur['pv']} pv")
 
     elif evenement['type'] == "tresor":
-        print(f"Vous trouvez un trésor: {evenement['objet']}. Ce trésor a été ajouté a votre inventaire.")
+        print(f"\nVous trouvez un trésor: {evenement['objet']}. Ce trésor a été ajouté a votre inventaire.")
         joueur['inventaire'].append(evenement['objet'])
 
     joueur["salles"] += 1
-    print(f"📍 Salle {joueur['salles']}/10")
+    print(f"\n📍 Salle {joueur['salles']}/10")
 
 def calculer_degats(joueur):
     degats_armes = {
@@ -110,7 +110,7 @@ def utiliser_potion(joueur):
 
     potions_disponibles = ["potion", "super potion"]
     potions_inventaire = [objet for objet in joueur["inventaire"] if objet in potions_disponibles]
-    print("Voici les potions disponibles dans votre inventaire :")
+    print("\nVoici les potions disponibles dans votre inventaire :")
     for potion in potions_inventaire:
         print(f" - {potion}")
     choix = input("Quelle potion voulez vous utiliser ? ")
@@ -122,21 +122,21 @@ def utiliser_potion(joueur):
         soin = soins[choix]
         joueur["pv"] += soin
         joueur["inventaire"].remove(choix)
-        print(f"🧪 Vous vous êtes soigné de {soin} PV.")
-        print("🔁 Retour au menu principal...\n")
+        print(f"\n🧪 Vous vous êtes soigné de {soin} PV.")
+        print("\n🔁 Retour au menu principal...\n")
 
 
 def combat(joueur, monstre):
-    print(f"⚔️  Combat contre un {monstre['nom']} ! Il a {monstre['pv']} PV.")
+    print(f"\n⚔️  Combat contre un {monstre['nom']} ! Il a {monstre['pv']} PV.")
     while monstre['pv'] > 0 and joueur['pv'] > 0:
         degats = calculer_degats(joueur)
         monstre["pv"] -= degats
         print(f"🗡️  Vous infligez {degats} dégâts au {monstre['nom']} (il lui reste {monstre['pv']} PV)")
         if monstre["pv"] <= 0:
-            print(f"✅ Vous avez vaincu le {monstre['nom']} !")
+            print(f"\n✅ Vous avez vaincu le {monstre['nom']} !")
             break
         joueur["pv"] -= monstre["force"]
-        print(f"💥 Le {monstre['nom']} vous inflige {monstre['force']} dégâts ! Il vous reste {joueur['pv']} PV\n")
+        print(f"\n💥 Le {monstre['nom']} vous inflige {monstre['force']} dégâts ! Il vous reste {joueur['pv']} PV\n")
         input("Appuyez sur Entrée pour continuer...\n")
 
 
@@ -156,6 +156,21 @@ def changer_arme(joueur):
     else:
         print("Arme invalide.")
 
+def afficher_intro():
+    print("\n" + "="*50)
+    print("🏰 BIENVENUE DANS DUNGEON QUEST 🏰")
+    print("="*50)
+    print("\nVous êtes un aventurier intrépide qui entre dans un donjon mystérieux.")
+    print("Votre objectif est d’explorer 10 salles et de survivre aux dangers qui s’y trouvent.")
+    print("\n🧩 Chaque salle peut contenir :")
+    print("- Un monstre à combattre (ou fuir... à vos risques)")
+    print("- Un piège douloureux")
+    print("- Une potion de soin")
+    print("- Un trésor contenant des armes puissantes\n")
+    print("⚔️  Règle du jeu : Vous pouvez changer d’arme, utiliser des potions ou consulter votre inventaire à tout moment.")
+    print("🏆 Atteignez la 10e salle pour gagner. Si vos PV tombent à 0, c'est la fin.\n")
+    print("Bonne chance, héros...\n")
+    input("Appuyez sur Entrée pour commencer votre aventure...")
 
 
 
@@ -169,7 +184,7 @@ def jouer():
         "arme": "baton",
         "salles": 0
 }
-
+    afficher_intro()
     pseudo = input("Quel est le nom de votre aventurier ? ")
     stats_joueur["nom"] = pseudo
     afficher_stats(stats_joueur)
