@@ -33,7 +33,7 @@ def afficher_stats(joueur):
     """fonction qui affiche les stats de depart du joueur"""
     print(f"  🧙 Bienvenue {joueur['nom']}")
     print(f"  ❤️  Points de vie : {joueur['pv']}")
-    print("  🎒 Inventaire: ")
+    print("  🎒 Voici votre inventaire de départ: ")
     for objets in joueur["inventaire"]:
         print(f"    - {objets}")
 
@@ -52,11 +52,25 @@ def jouer():
     pseudo = input("Quel est le nom de votre aventurier ? ")
     stats_joueur["nom"] = pseudo
     afficher_stats(stats_joueur)
+    print("Vous allez rentrer dans la première salle, Préparez vous !")
     evenement = generer_salle()
     if evenement["type"] == "monstre":
-        print(f"Vous rencontrez un {evenement['nom']} qui vous inflige {evenement['degats']} pv")
+        print(f"Vous rencontrez un {evenement['nom']}")
+        reponse_monstre = input("Voulez vous le combattre (A) ou fuir (B) ? ")
+        if reponse_monstre.strip().upper() == "A":
+            print(f"Le {evenement['type']} vous inflige {evenement['degats']} pv")
+            print(f"Il vous reste {stats_joueur['pv'] - evenement['degats']} pv")
+            stats_joueur["pv"] -= evenement["degats"]
+            print(f"Vous infligez 20 pv au {evenement['nom']}, il meurt sur le coup.")
     if evenement['type'] == "potion":
-        print(f"Vous vous soignez de {evenement['soin']} pv")
+        print(f"Vous avez {stats_joueur['pv']} pv.")
+        reponse_potion = input(f"voulez vous utiliser cette potion qui vous soignera de {evenement['soin']} pv ? Oui (A) ou Non (B)")
+        if reponse_potion.strip().upper() == "A":
+            print(f"Vous vous soignez de {evenement['soin']} pv")
+        else:
+            print("Cette potion a été rangée dans votre inventaire")
+        stats_joueur['inventaire'].append("potion")
+        afficher_stats(stats_joueur)
     if evenement['type'] == "piege":
         print(f"Vous tombez sur un piège qui vous inflige {evenement['degats']} pv")
     if evenement['type'] == "tresor":
